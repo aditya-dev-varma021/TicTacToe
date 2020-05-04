@@ -8,7 +8,7 @@ public class TTTFrame extends JFrame
     public TTTFrame(int width, int height)
     {
         // creates the JFrame with the given name
-        super("Chess");
+        super("Tic Tac Toe");
 
         // Sets the close button to exit the program
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
