@@ -1,6 +1,3 @@
-/** FIXME: Loaded from an old attempt to make a Chess game,
- * requires updating and modernization.
- */
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -9,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -227,6 +226,8 @@ public class TTTPanel extends JPanel implements MouseListener {
         /** Move to make. **/
         int[] move;
 
+        /** Game states seen before. **/
+        HashMap<char[][], Integer> prev = new HashMap<char[][], Integer>();
 
         /** Makes a new MachinePlayer. **/
         MachinePlayer() {
@@ -237,6 +238,7 @@ public class TTTPanel extends JPanel implements MouseListener {
         /** Return a move after searching the game tree to DEPTH>0 moves
          *  from the current position. Assumes the game is not over. */
         private int[] getMove(Game g) {
+            System.out.println(prev.size());
             Game lookAhead = g.copy();
             double value;
             move = null;
@@ -260,7 +262,13 @@ public class TTTPanel extends JPanel implements MouseListener {
                 for (int[] m : legalMoves) {
                     temp = game.copy();
                     temp.makeMove(m[0], m[1], temp.turn);
-                    int eval = minimax(temp, depth - 1, false, -1, alpha, beta);
+                    int eval = 0;
+                    if (prev.containsKey(temp.board)) {
+                        eval = prev.get(temp.board);
+                    } else {
+                        eval = minimax(temp, depth - 1, false, -1, alpha, beta);
+                        prev.put(temp.board, eval);
+                    }
                     if (saveMove) {
                         if (eval > maxEval) {
                             move = m;
@@ -280,7 +288,13 @@ public class TTTPanel extends JPanel implements MouseListener {
                 for (int[] m : legalMoves) {
                     temp = game.copy();
                     temp.makeMove(m[0], m[1], temp.turn);
-                    int eval = minimax(temp, depth - 1, false, 1, alpha, beta);
+                    int eval = 0;
+                    if (prev.containsKey(temp.board)) {
+                        eval = prev.get(temp.board);
+                    } else {
+                        eval = minimax(temp, depth - 1, false, 1, alpha, beta);
+                        prev.put(temp.board, eval);
+                    }
                     if (saveMove) {
                         if (eval < minEval) {
                             move = m;
